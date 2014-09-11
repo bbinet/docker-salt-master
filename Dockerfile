@@ -20,4 +20,6 @@ VOLUME ["/config"]
 # salt-master, halite
 EXPOSE 4505 4506 443
 
+ENV EXEC_CMD "/usr/bin/salt-master --config /config --log-level debug"
+
 CMD ["/run.sh"]

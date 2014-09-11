@@ -2,11 +2,17 @@
 
 set -m
 
-if [ -x "/config/before_run.sh" ]
+if [ -x "$BEFORE_RUN_SCRIPT" ]
 then
+    echo "=> Running BEFORE_RUN_SCRIPT [$BEFORE_RUN_SCRIPT]..."
     # can be used to add custom users to the docker container
-    /config/before_run.sh
+    $BEFORE_RUN_SCRIPT
+    if [ $? -ne 0 ]
+    then
+        echo "=> BEFORE_RUN_SCRIPT [$BEFORE_RUN_SCRIPT] has failed: Abort!"
+        exit 0
+    fi
 fi
 
-echo "=> Starting salt-master server..."
-exec /usr/bin/salt-master --config /config --log-level debug
+echo "=> Running EXEC_CMD [$EXEC_CMD]..."
+exec $EXEC_CMD
