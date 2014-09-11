@@ -10,7 +10,7 @@ then
     if [ $? -ne 0 ]
     then
         echo "=> BEFORE_RUN_SCRIPT [$BEFORE_RUN_SCRIPT] has failed: Abort!"
-        exit 0
+        exit 1
     fi
 fi
 
