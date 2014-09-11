@@ -2,14 +2,14 @@
 
 set -m
 
-if [ -x "$BEFORE_RUN_SCRIPT" ]
+if [ -x "$BEFORE_EXEC_SCRIPT" ]
 then
-    echo "=> Running BEFORE_RUN_SCRIPT [$BEFORE_RUN_SCRIPT]..."
+    echo "=> Running BEFORE_EXEC_SCRIPT [$BEFORE_EXEC_SCRIPT]..."
     # can be used to add custom users to the docker container
-    $BEFORE_RUN_SCRIPT
+    $BEFORE_EXEC_SCRIPT
     if [ $? -ne 0 ]
     then
-        echo "=> BEFORE_RUN_SCRIPT [$BEFORE_RUN_SCRIPT] has failed: Abort!"
+        echo "=> BEFORE_EXEC_SCRIPT [$BEFORE_EXEC_SCRIPT] has failed: Abort!"
         exit 1
     fi
 fi
