@@ -2,7 +2,7 @@ FROM debian:wheezy
 
 MAINTAINER Bruno Binet <bruno.binet@helioslite.com>
 
-ADD salt.list /etc/apt/sources.list.d/salt.list
+RUN echo "deb http://debian.saltstack.com/debian wheezy-saltstack-2014-07 main" > /etc/apt/sources.list.d/salt.list
 ADD debian-salt-team-joehealy.gpg.key /tmp/debian-salt-team-joehealy.gpg.key
 RUN apt-key add /tmp/debian-salt-team-joehealy.gpg.key && \
   rm /tmp/debian-salt-team-joehealy.gpg.key
