@@ -14,7 +14,7 @@ then
     fi
 fi
 
-if [ -x "$SALT_API_CMD" ]
+if [ -n "$SALT_API_CMD" ]
 then
     echo "=> Running SALT_API_CMD [$SALT_API_CMD]..."
     $SALT_API_CMD
