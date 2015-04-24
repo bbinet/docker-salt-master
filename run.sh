@@ -20,5 +20,5 @@ then
     $SALT_API_CMD
 fi
 
-echo "=> Running EXEC_SALT_MASTER [$EXEC_SALT_MASTER]..."
-exec $EXEC_SALT_MASTER
+echo "=> Running EXEC_CMD [$EXEC_CMD]..."
+exec $EXEC_CMD
