@@ -7,7 +7,7 @@ ADD debian-salt-team-joehealy.gpg.key /tmp/debian-salt-team-joehealy.gpg.key
 RUN apt-key add /tmp/debian-salt-team-joehealy.gpg.key && \
   rm /tmp/debian-salt-team-joehealy.gpg.key
 
-ENV SALT_VERSION 2014.7.4+ds-1~bpo70+1
+ENV SALT_VERSION 2014.7.5+ds-1~bpo70+1
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
   salt-master=${SALT_VERSION} salt-api=${SALT_VERSION} \
