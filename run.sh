@@ -14,5 +14,11 @@ then
     fi
 fi
 
-echo "=> Running EXEC_CMD [$EXEC_CMD]..."
-exec $EXEC_CMD
+if [ -x "$SALT_API_CMD" ]
+then
+    echo "=> Running SALT_API_CMD [$SALT_API_CMD]..."
+    $SALT_API_CMD
+fi
+
+echo "=> Running EXEC_SALT_MASTER [$EXEC_SALT_MASTER]..."
+exec $EXEC_SALT_MASTER
