@@ -21,8 +21,8 @@ RUN chmod a+x /run.sh
 
 VOLUME ["/config"]
 
-# salt-master, halite, salt-api
-EXPOSE 4505 4506 443 8000
+# salt-master, salt-api, halite
+EXPOSE 4505 4506 443 4430
 
 ENV BEFORE_EXEC_SCRIPT /config/before-exec.sh
 ENV SALT_API_CMD /usr/bin/salt-api -c /config -d
