@@ -4,12 +4,12 @@ MAINTAINER Bruno Binet <bruno.binet@helioslite.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN echo "deb http://debian.saltstack.com/debian wheezy-saltstack-2014-07 main" > /etc/apt/sources.list.d/salt.list
+RUN echo "deb http://debian.saltstack.com/debian wheezy-saltstack-2015-05 main" > /etc/apt/sources.list.d/salt.list
 ADD debian-salt-team-joehealy.gpg.key /tmp/debian-salt-team-joehealy.gpg.key
 RUN apt-key add /tmp/debian-salt-team-joehealy.gpg.key && \
   rm /tmp/debian-salt-team-joehealy.gpg.key
 
-ENV SALT_VERSION 2014.7.5+ds-1~bpo70+1
+ENV SALT_VERSION 2015.5.0+ds-1~bpo70+1
 RUN apt-get update && apt-get install -yq --no-install-recommends \
   salt-master=${SALT_VERSION} salt-api=${SALT_VERSION} \
   python-git python-openssl python-cherrypy3 python-pip
