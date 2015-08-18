@@ -9,7 +9,7 @@ ADD debian-salt-team-joehealy.gpg.key /tmp/debian-salt-team-joehealy.gpg.key
 RUN apt-key add /tmp/debian-salt-team-joehealy.gpg.key && \
   rm /tmp/debian-salt-team-joehealy.gpg.key
 
-ENV SALT_VERSION 2015.5.0+ds-1~bpo70+1
+ENV SALT_VERSION 2015.5.3+ds-1~bpo70+2
 RUN apt-get update && apt-get install -yq --no-install-recommends \
   salt-master=${SALT_VERSION} salt-api=${SALT_VERSION} \
   python-git python-openssl python-cherrypy3 python-pip
