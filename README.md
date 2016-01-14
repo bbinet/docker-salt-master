@@ -63,5 +63,4 @@ For example:
         -p 4505:4505 \
         -p 4506:4506 \
         -p 443:443 \
-        -p 4430:4430 \
         bbinet/salt-master
