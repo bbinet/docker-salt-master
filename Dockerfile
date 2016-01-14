@@ -12,9 +12,13 @@ RUN apt-key add /tmp/debian-salt-team-joehealy.gpg.key && \
 ENV SALT_VERSION 2015.5.3+ds-1~bpo70+2
 RUN apt-get update && apt-get install -yq --no-install-recommends \
   salt-master=${SALT_VERSION} salt-api=${SALT_VERSION} \
-  python-git python-openssl python-cherrypy3 python-pip
+  python-git python-openssl python-cherrypy3
 
-RUN pip install Halite
+ENV MOLTEN_VERSION 0.2.0pre1
+ENV MOLTEN_MD5 86423381098105c184d45bf141ab22c3
+ADD https://github.com/martinhoefling/molten/releases/download/v${MOLTEN_VERSION}/molten-${MOLTEN_VERSION}.tar.gz molten-${MOLTEN_VERSION}.tar.gz
+RUN echo "${MOLTEN_MD5}  molten-${MOLTEN_VERSION}.tar.gz" | md5sum --check
+RUN mkdir -p /opt/molten && tar -xf molten-0.2.0pre1.tar.gz -C /opt/molten --strip-components=1
 
 ADD run.sh /run.sh
 RUN chmod a+x /run.sh
