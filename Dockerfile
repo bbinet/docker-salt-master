@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
   salt-master=${SALT_VERSION} salt-api=${SALT_VERSION} \
   python-git python-openssl python-cherrypy3
 
-ENV MOLTEN_VERSION 0.2.0pre1
-ENV MOLTEN_MD5 86423381098105c184d45bf141ab22c3
+ENV MOLTEN_VERSION 0.2.0
+ENV MOLTEN_MD5 d9c247637c53f433d9a8e03ea7e97ba8
 ADD https://github.com/martinhoefling/molten/releases/download/v${MOLTEN_VERSION}/molten-${MOLTEN_VERSION}.tar.gz molten-${MOLTEN_VERSION}.tar.gz
 RUN echo "${MOLTEN_MD5}  molten-${MOLTEN_VERSION}.tar.gz" | md5sum --check
 RUN mkdir -p /opt/molten && tar -xf molten-0.2.0pre1.tar.gz -C /opt/molten --strip-components=1
