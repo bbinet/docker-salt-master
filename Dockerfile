@@ -1,21 +1,22 @@
-FROM debian:wheezy
+FROM debian:jessie
 
 MAINTAINER Bruno Binet <bruno.binet@helioslite.com>
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV SALT_VERSION 2016.11
+ENV REFRESHED_AT 2017-01-23
 
-RUN echo "deb http://debian.saltstack.com/debian wheezy-saltstack-2015-05 main" > /etc/apt/sources.list.d/salt.list
-ADD debian-salt-team-joehealy.gpg.key /tmp/debian-salt-team-joehealy.gpg.key
-RUN apt-key add /tmp/debian-salt-team-joehealy.gpg.key && \
-  rm /tmp/debian-salt-team-joehealy.gpg.key
+RUN echo "deb http://repo.saltstack.com/apt/debian/8/amd64/${SALT_VERSION} jessie main" > /etc/apt/sources.list.d/salt.list
 
-ENV SALT_VERSION 2015.5.3+ds-1~bpo70+2
+ADD https://repo.saltstack.com/apt/debian/8/amd64/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub /tmp/SALTSTACK-GPG-KEY.pub
+RUN echo "9e0d77c16ba1fe57dfd7f1c5c2130438  /tmp/SALTSTACK-GPG-KEY.pub" | md5sum --check
+RUN apt-key add /tmp/SALTSTACK-GPG-KEY.pub
+
 RUN apt-get update && apt-get install -yq --no-install-recommends \
-  salt-master=${SALT_VERSION} salt-api=${SALT_VERSION} \
-  python-git python-openssl python-cherrypy3
+  salt-master salt-api python-apt python-git python-openssl python-cherrypy3
 
-ENV MOLTEN_VERSION 0.2.0
-ENV MOLTEN_MD5 d9c247637c53f433d9a8e03ea7e97ba8
+ENV MOLTEN_VERSION 0.3.0
+ENV MOLTEN_MD5 0b40dcb86a08c2eee25e37e4ad2bca52
 ADD https://github.com/martinhoefling/molten/releases/download/v${MOLTEN_VERSION}/molten-${MOLTEN_VERSION}.tar.gz molten-${MOLTEN_VERSION}.tar.gz
 RUN echo "${MOLTEN_MD5}  molten-${MOLTEN_VERSION}.tar.gz" | md5sum --check
 RUN mkdir -p /opt/molten && tar -xf molten-${MOLTEN_VERSION}.tar.gz -C /opt/molten --strip-components=1
@@ -23,13 +24,13 @@ RUN mkdir -p /opt/molten && tar -xf molten-${MOLTEN_VERSION}.tar.gz -C /opt/molt
 ADD run.sh /run.sh
 RUN chmod a+x /run.sh
 
-VOLUME ["/config"]
-
 # salt-master, salt-api
 EXPOSE 4505 4506 443
 
-ENV BEFORE_EXEC_SCRIPT /config/before-exec.sh
-ENV SALT_API_CMD /usr/bin/salt-api -c /config -d
-ENV EXEC_CMD /usr/bin/salt-master -c /config -l debug
+ENV SALT_CONFIG /etc/salt
+ENV BEFORE_EXEC_SCRIPT ${SALT_CONFIG}/before-exec.sh
+ENV SALT_API_CMD /usr/bin/salt-api -c ${SALT_CONFIG} -d
+ENV EXEC_CMD /usr/bin/salt-master -c ${SALT_CONFIG} -l debug
+VOLUME ["${SALT_CONFIG}"]
 
 CMD ["/run.sh"]
