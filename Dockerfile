@@ -4,7 +4,7 @@ MAINTAINER Bruno Binet <bruno.binet@helioslite.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV SALT_VERSION 2016.11
-ENV REFRESHED_AT 2017-01-23
+ENV REFRESHED_AT 2017-01-30
 
 RUN echo "deb http://repo.saltstack.com/apt/debian/8/amd64/${SALT_VERSION} jessie main" > /etc/apt/sources.list.d/salt.list
 
