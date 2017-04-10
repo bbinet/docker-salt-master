@@ -13,7 +13,7 @@ RUN echo "9e0d77c16ba1fe57dfd7f1c5c2130438  /tmp/SALTSTACK-GPG-KEY.pub" | md5sum
 RUN apt-key add /tmp/SALTSTACK-GPG-KEY.pub
 
 RUN apt-get update && apt-get install -yq --no-install-recommends \
-  salt-master salt-api python-apt python-git python-openssl python-cherrypy3
+  salt-master reclass salt-api python-apt python-git python-openssl python-cherrypy3
 
 ENV MOLTEN_VERSION 0.3.0
 ENV MOLTEN_MD5 0b40dcb86a08c2eee25e37e4ad2bca52
@@ -30,6 +30,6 @@ EXPOSE 4505 4506 443
 ENV SALT_CONFIG /etc/salt
 ENV BEFORE_EXEC_SCRIPT ${SALT_CONFIG}/before-exec.sh
 ENV SALT_API_CMD /usr/bin/salt-api -c ${SALT_CONFIG} -d
-ENV EXEC_CMD /usr/bin/salt-master -c ${SALT_CONFIG} -l debug
+ENV EXEC_CMD /usr/bin/salt-master -c ${SALT_CONFIG}  --log-file-level=quiet --log-level=debug
 
 CMD ["/run.sh"]
