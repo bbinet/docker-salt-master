@@ -68,7 +68,7 @@ else
     done
 fi
 
-if [ -x "$BEFORE_EXEC_SCRIPT" ]
+if [ -x "${BEFORE_EXEC_SCRIPT%% *}" ]
 then
     echo "=> Running BEFORE_EXEC_SCRIPT [$BEFORE_EXEC_SCRIPT]..."
     $BEFORE_EXEC_SCRIPT
