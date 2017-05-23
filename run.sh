@@ -26,46 +26,64 @@ create_user() {
     fi
 }
 
-accept_minion() {
-    minion=$1
-    key=$2
-    if [ -z "${minion}" ] || [ -z "${key}" ]; then
-        abort "=> accept_minion 2 args are required (minion, key)."
-    fi
-    mkdir -p ${SALT_CONFIG}/pki/master/minions
-    echo "=> Overwriting minion key: ${minion}"
-    echo -e "${key}" > ${SALT_CONFIG}/pki/master/minions/${minion}
-}
-
-# create users from environment variables
+# create users from environment variables and docker secrets
 if [ -z "${PRE_CREATE_USERS}" ]; then
     echo "=> No user names supplied: no user will be created."
 else
     for user in $(echo ${PRE_CREATE_USERS} | tr "," "\n"); do
-        userpassword_var="${user}_PASSWORD"
-        create_user $user ${!userpassword_var}
+        if [ -f "/run/secrets/${user}.password" ]
+        then
+            create_user $user $(cat "/run/secrets/${user}.password")
+        else
+            userpassword_var="${user}_PASSWORD"
+            create_user $user ${!userpassword_var}
+        fi
     done
 fi
 
-# create salt master keys
+# create salt master keys from env variables
 if [ -n "${KEY_MASTER_PRIV}" ]; then
     if [ -z "${KEY_MASTER_PUB}" ]; then
         abort "=> Both KEY_MASTER_PRIV and KEY_MASTER_PUB should be set."
     fi
     echo "=> Overwriting master public & private key"
-    mkdir --mode=700 -p ${SALT_CONFIG}/pki/master
-    echo -e "${KEY_MASTER_PRIV}" > ${SALT_CONFIG}/pki/master/master.pem
-    echo -e "${KEY_MASTER_PUB}" > ${SALT_CONFIG}/pki/master/master.pub
+    mkdir -p "${SALT_CONFIG}/pki/master"
+    chmod 700 "${SALT_CONFIG}/pki/master"
+    echo -e "${KEY_MASTER_PRIV}" > "${SALT_CONFIG}/pki/master/master.pem"
+    echo -e "${KEY_MASTER_PUB}" > "${SALT_CONFIG}/pki/master/master.pub"
 fi
 
-# provision pre-accepted salt minion keys
-if [ -z "${PRE_ACCEPT_MINIONS}" ]; then
-    echo "=> No minion key supplied: no minion key will be pre-accepted."
-else
-    for minion in $(echo ${PRE_ACCEPT_MINIONS} | tr "," "\n"); do
-        minionkey_var="${minion//-/_}_KEY"
-        accept_minion $minion "${!minionkey_var}"
-    done
+# create salt master keys from docker secrets
+if [ -f /run/secrets/master.pem ] && [ -f /run/secrets/master.pub ]
+then
+    mkdir -p "${SALT_CONFIG}/pki/master"
+    chmod 700 "${SALT_CONFIG}/pki/master"
+    echo "=> Overwriting master public & private key from docker secrets"
+    cp /run/secrets/master.pem "${SALT_CONFIG}/pki/master/master.pem"
+    cp /run/secrets/master.pub "${SALT_CONFIG}/pki/master/master.pub"
+fi
+
+if [ -f "${SALT_CONFIG}/pki/master/master.pem" ]
+then
+    if [ -z "${PRE_ACCEPT_MINIONS}" ]; then
+        echo "=> No minion key supplied: no minion key will be pre-accepted."
+    else
+        for minion in $(echo ${PRE_ACCEPT_MINIONS} | tr "," "\n"); do
+            mkdir -p "${SALT_CONFIG}/pki/master/minions"
+            minionkey_var="${minion//-/_}_KEY"
+            if [ -f "/run/secrets/${minion}.pub" ]
+            then
+                echo "=> Overwriting minion ${minion} key from docker secrets"
+                cp "/run/secrets/${minion}.pub" "${SALT_CONFIG}/pki/master/minions/${minion}"
+            elif ! [ -z "${!minionkey_var}" ]
+            then
+                echo "=> Overwriting minion ${minion} key from env variables"
+                echo -e "${!minionkey_var}" > "${SALT_CONFIG}/pki/master/minions/${minion}"
+            else
+                abort "=> Failed to preaccept minion \"${minion}\"!"
+            fi
+        done
+    fi
 fi
 
 if [ -x "${BEFORE_EXEC_SCRIPT%% *}" ]
