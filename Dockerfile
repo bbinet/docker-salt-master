@@ -6,6 +6,9 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV SALT_VERSION 2017.7
 #ENV REFRESHED_AT 2017-01-31
 
+RUN apt-get update && apt-get install -yq --no-install-recommends \
+  git openssh-client make gnupg
+
 RUN echo "deb http://repo.saltstack.com/apt/debian/9/amd64/${SALT_VERSION} stretch main" > /etc/apt/sources.list.d/salt.list
 
 ADD https://repo.saltstack.com/apt/debian/9/amd64/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub /tmp/SALTSTACK-GPG-KEY.pub
@@ -14,7 +17,7 @@ RUN apt-key add /tmp/SALTSTACK-GPG-KEY.pub
 
 RUN apt-get update && apt-get install -yq --no-install-recommends \
   salt-master reclass salt-api python-apt python-git python-openssl \
-  python-cherrypy3 git openssh-client make
+  python-cherrypy3
 
 ENV MOLTEN_VERSION 0.3.1
 ENV MOLTEN_MD5 04483620978a3167827bdd1424e34505
