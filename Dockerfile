@@ -1,14 +1,14 @@
-FROM debian:jessie
+FROM debian:stretch
 
 MAINTAINER Bruno Binet <bruno.binet@helioslite.com>
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV SALT_VERSION 2016.11
-ENV REFRESHED_AT 2017-01-31
+ENV SALT_VERSION 2017.7
+#ENV REFRESHED_AT 2017-01-31
 
-RUN echo "deb http://repo.saltstack.com/apt/debian/8/amd64/${SALT_VERSION} jessie main" > /etc/apt/sources.list.d/salt.list
+RUN echo "deb http://repo.saltstack.com/apt/debian/9/amd64/${SALT_VERSION} stretch main" > /etc/apt/sources.list.d/salt.list
 
-ADD https://repo.saltstack.com/apt/debian/8/amd64/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub /tmp/SALTSTACK-GPG-KEY.pub
+ADD https://repo.saltstack.com/apt/debian/9/amd64/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub /tmp/SALTSTACK-GPG-KEY.pub
 RUN echo "9e0d77c16ba1fe57dfd7f1c5c2130438  /tmp/SALTSTACK-GPG-KEY.pub" | md5sum --check
 RUN apt-key add /tmp/SALTSTACK-GPG-KEY.pub
 
