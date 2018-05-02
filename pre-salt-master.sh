@@ -1,6 +1,9 @@
 #!/bin/bash
 
-set -m
+# Import our environment variables from systemd
+for e in $(tr "\000" "\n" < /proc/1/environ); do
+    eval "export $e"
+done
 
 abort() {
     msg="$1"
@@ -47,38 +50,38 @@ if [ -n "${KEY_MASTER_PRIV}" ]; then
         abort "=> Both KEY_MASTER_PRIV and KEY_MASTER_PUB should be set."
     fi
     echo "=> Overwriting master public & private key"
-    mkdir -p "${SALT_CONFIG}/pki/master"
-    chmod 700 "${SALT_CONFIG}/pki/master"
-    echo -e "${KEY_MASTER_PRIV}" > "${SALT_CONFIG}/pki/master/master.pem"
-    echo -e "${KEY_MASTER_PUB}" > "${SALT_CONFIG}/pki/master/master.pub"
+    mkdir -p "/etc/salt/pki/master"
+    chmod 700 "/etc/salt/pki/master"
+    echo -e "${KEY_MASTER_PRIV}" > "/etc/salt/pki/master/master.pem"
+    echo -e "${KEY_MASTER_PUB}" > "/etc/salt/pki/master/master.pub"
 fi
 
 # create salt master keys from docker secrets
 if [ -f /run/secrets/master.pem ] && [ -f /run/secrets/master.pub ]
 then
-    mkdir -p "${SALT_CONFIG}/pki/master"
-    chmod 700 "${SALT_CONFIG}/pki/master"
+    mkdir -p "/etc/salt/pki/master"
+    chmod 700 "/etc/salt/pki/master"
     echo "=> Overwriting master public & private key from docker secrets"
-    cp /run/secrets/master.pem "${SALT_CONFIG}/pki/master/master.pem"
-    cp /run/secrets/master.pub "${SALT_CONFIG}/pki/master/master.pub"
+    cp /run/secrets/master.pem "/etc/salt/pki/master/master.pem"
+    cp /run/secrets/master.pub "/etc/salt/pki/master/master.pub"
 fi
 
-if [ -f "${SALT_CONFIG}/pki/master/master.pem" ]
+if [ -f "/etc/salt/pki/master/master.pem" ]
 then
     if [ -z "${PRE_ACCEPT_MINIONS}" ]; then
         echo "=> No minion key supplied: no minion key will be pre-accepted."
     else
         for minion in $(echo ${PRE_ACCEPT_MINIONS} | tr "," "\n"); do
-            mkdir -p "${SALT_CONFIG}/pki/master/minions"
+            mkdir -p "/etc/salt/pki/master/minions"
             minionkey_var="${minion//-/_}_KEY"
             if [ -f "/run/secrets/${minion}.pub" ]
             then
                 echo "=> Overwriting minion ${minion} key from docker secrets"
-                cp "/run/secrets/${minion}.pub" "${SALT_CONFIG}/pki/master/minions/${minion}"
+                cp "/run/secrets/${minion}.pub" "/etc/salt/pki/master/minions/${minion}"
             elif ! [ -z "${!minionkey_var}" ]
             then
                 echo "=> Overwriting minion ${minion} key from env variables"
-                echo -e "${!minionkey_var}" > "${SALT_CONFIG}/pki/master/minions/${minion}"
+                echo -e "${!minionkey_var}" > "/etc/salt/pki/master/minions/${minion}"
             else
                 abort "=> Failed to preaccept minion \"${minion}\"!"
             fi
@@ -86,6 +89,8 @@ then
     fi
 fi
 
+
+BEFORE_EXEC_SCRIPT=${BEFORE_EXEC_SCRIPT:-/etc/salt/before-exec.sh}
 if [ -x "${BEFORE_EXEC_SCRIPT%% *}" ]
 then
     echo "=> Running BEFORE_EXEC_SCRIPT [$BEFORE_EXEC_SCRIPT]..."
@@ -95,12 +100,3 @@ then
         abort "=> BEFORE_EXEC_SCRIPT [$BEFORE_EXEC_SCRIPT] has failed."
     fi
 fi
-
-if [ -n "$SALT_API_CMD" ]
-then
-    echo "=> Running SALT_API_CMD [$SALT_API_CMD]..."
-    $SALT_API_CMD
-fi
-
-echo "=> Running EXEC_CMD [$EXEC_CMD]..."
-exec $EXEC_CMD
