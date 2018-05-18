@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # Import our environment variables from systemd
-for e in $(tr "\000" "\n" < /proc/1/environ); do
-    eval "export $e"
-done
+while IFS= read -rd '' var; do export "$var"; done </proc/1/environ
 
 abort() {
     msg="$1"
