@@ -9,7 +9,7 @@ ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
 ENV SALT_VERSION 2018.3
-#ENV REFRESHED_AT 2018-03-01
+#ENV REFRESHED_AT 2018-07-12
 
 RUN echo "deb http://repo.saltstack.com/apt/debian/9/amd64/${SALT_VERSION} stretch main" > /etc/apt/sources.list.d/salt.list
 ADD https://repo.saltstack.com/apt/debian/9/amd64/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub /tmp/SALTSTACK-GPG-KEY.pub
@@ -19,7 +19,7 @@ RUN apt-key add /tmp/SALTSTACK-GPG-KEY.pub
 RUN apt-get update && apt-get install -yq --no-install-recommends \
     dbus vim less net-tools procps lsb-release git openssh-client make gnupg \
     salt-master salt-api python-apt python-git python-openssl \
-    python-cherrypy3 python-pip \
+    python-concurrent.futures python-cherrypy3 python-pip \
     && pip install https://github.com/salt-formulas/reclass/archive/develop.zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
