@@ -8,8 +8,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
-ENV SALT_VERSION 2018.3
-ENV REFRESHED_AT 2019-03-07
+ENV SALT_VERSION 2019.2
+#ENV REFRESHED_AT 2019-03-07
 
 RUN echo "deb http://repo.saltstack.com/apt/debian/9/amd64/${SALT_VERSION} stretch main" > /etc/apt/sources.list.d/salt.list
 ADD https://repo.saltstack.com/apt/debian/9/amd64/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub /tmp/SALTSTACK-GPG-KEY.pub
