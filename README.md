@@ -48,7 +48,8 @@ can add the following `/config/master.d/api.conf` file:
 
 By default, the container will try to run the `/config/before-exec.sh` script,
 then the `salt-api`, then the `salt-master`, so you can provide additional
-provisioning stuff through this script (like creating new users).
+provisioning stuff through this script (like creating new users using command:
+`useradd <user> -p "$(mkpasswd -m sha-512 <password>)"`).
 
 You may also configure the `salt-master` fileserver to be located in another
 `/data` volume.
