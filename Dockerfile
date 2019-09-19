@@ -19,8 +19,8 @@ RUN apt-key add /tmp/SALTSTACK-GPG-KEY.pub
 RUN apt-get update && apt-get install -yq --no-install-recommends \
     dbus vim less net-tools procps lsb-release git openssh-client make gnupg \
     salt-master salt-api python-apt python-git python-openssl \
-    python-concurrent.futures python-cherrypy3 python-pip \
-    && pip install https://github.com/salt-formulas/reclass/archive/v1.6.0.zip \
+    python-concurrent.futures python-pip \
+    && pip install cherrypy==3.2.3 https://github.com/salt-formulas/reclass/archive/v1.6.0.zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV MOLTEN_VERSION 0.3.1
