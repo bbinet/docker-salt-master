@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
-ENV SALT_VERSION 2019.2.2
+ENV SALT_VERSION 2019.2.3
 #ENV REFRESHED_AT 2019-03-07
 
 RUN echo "deb http://repo.saltstack.com/apt/debian/9/amd64/archive/${SALT_VERSION} stretch main" > /etc/apt/sources.list.d/salt.list
@@ -25,8 +25,6 @@ RUN apt-get update && apt-get install -yq --no-install-recommends systemd \
     && pip install cherrypy==3.2.3 https://github.com/salt-formulas/reclass/archive/v1.6.0.zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-ENV MOLTEN_VERSION 0.3.1
-ENV MOLTEN_MD5 04483620978a3167827bdd1424e34505
 # We never want these to run in a container
 # Feel free to edit the list but this is the one we used
 RUN systemctl mask \
@@ -43,6 +41,8 @@ COPY entry.sh /usr/bin/entry.sh
 COPY resin.service /etc/systemd/system/resin.service
 RUN systemctl enable /etc/systemd/system/resin.service
 
+ENV MOLTEN_VERSION 0.3.2
+ENV MOLTEN_MD5 4bce824944e6a2f5d09d703af53d596d
 ADD https://github.com/martinhoefling/molten/releases/download/v${MOLTEN_VERSION}/molten-${MOLTEN_VERSION}.tar.gz molten-${MOLTEN_VERSION}.tar.gz
 RUN echo "${MOLTEN_MD5}  molten-${MOLTEN_VERSION}.tar.gz" | md5sum --check
 RUN mkdir -p /opt/molten && tar -xf molten-${MOLTEN_VERSION}.tar.gz -C /opt/molten --strip-components=1
