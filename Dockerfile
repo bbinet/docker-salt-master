@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -yq --no-install-recommends systemd \
     systemd-sysv dbus vim less net-tools procps lsb-release git \
     openssh-client make gnupg salt-master salt-api python-apt python-git \
     python-openssl python-concurrent.futures python-pip \
-    && pip install cherrypy==3.2.3 https://github.com/salt-formulas/reclass/archive/v1.6.0.zip \
+    && pip install cherrypy==3.2.3 https://github.com/bbinet/reclass/archive/helioslite.zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # We never want these to run in a container
