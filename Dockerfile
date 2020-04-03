@@ -1,4 +1,4 @@
-FROM balenalib/amd64-debian:stretch
+FROM balenalib/amd64-debian:buster
 
 MAINTAINER Bruno Binet <bruno.binet@helioslite.com>
 
@@ -13,16 +13,16 @@ ENV LANG C.UTF-8
 ENV SALT_VERSION 2019.2.3
 #ENV REFRESHED_AT 2019-03-07
 
-RUN echo "deb http://repo.saltstack.com/apt/debian/9/amd64/archive/${SALT_VERSION} stretch main" > /etc/apt/sources.list.d/salt.list
-ADD https://repo.saltstack.com/apt/debian/9/amd64/archive/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub /tmp/SALTSTACK-GPG-KEY.pub
+RUN echo "deb http://repo.saltstack.com/py3/debian/10/amd64/archive/${SALT_VERSION} buster main" > /etc/apt/sources.list.d/salt.list
+ADD https://repo.saltstack.com/py3/debian/10/amd64/archive/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub /tmp/SALTSTACK-GPG-KEY.pub
 RUN echo "9e0d77c16ba1fe57dfd7f1c5c2130438  /tmp/SALTSTACK-GPG-KEY.pub" | md5sum --check
 RUN apt-key add /tmp/SALTSTACK-GPG-KEY.pub
 
 RUN apt-get update && apt-get install -yq --no-install-recommends systemd \
     systemd-sysv dbus vim less net-tools procps lsb-release git \
-    openssh-client make gnupg salt-master salt-api python-apt python-git \
-    python-openssl python-concurrent.futures python-pip \
-    && pip install cherrypy==3.2.3 https://github.com/bbinet/reclass/archive/helioslite.zip \
+    openssh-client make gnupg salt-master salt-api python3-apt python3-git \
+    python3-openssl python3-pip python3-setuptools python3-wheel \
+    && pip3 install CherryPy https://github.com/bbinet/reclass/archive/helioslite.zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # We never want these to run in a container
