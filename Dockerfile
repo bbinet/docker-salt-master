@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
-ENV SALT_VERSION 2019.2.3
+ENV SALT_VERSION 2019.2.4
 #ENV REFRESHED_AT 2019-03-07
 
 RUN echo "deb http://repo.saltstack.com/py3/debian/10/amd64/archive/${SALT_VERSION} buster main" > /etc/apt/sources.list.d/salt.list
