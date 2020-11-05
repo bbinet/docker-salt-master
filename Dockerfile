@@ -21,7 +21,7 @@ RUN apt-key add /tmp/SALTSTACK-GPG-KEY.pub
 RUN apt-get update && apt-get install -yq --no-install-recommends systemd \
     systemd-sysv dbus vim less net-tools procps lsb-release git \
     openssh-client make gnupg salt-master salt-api python3-apt python3-git \
-    python3-openssl python3-pip python3-setuptools python3-wheel \
+    python3-openssl python3-pip python3-setuptools python3-wheel expect \
     && pip3 install CherryPy https://github.com/bbinet/reclass/archive/helioslite.zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
