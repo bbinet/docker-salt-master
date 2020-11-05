@@ -10,8 +10,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
-ENV SALT_VERSION 2019.2.4
-ENV REFRESHED_AT 2019-05-06
+ENV SALT_VERSION 2019.2.7
+#ENV REFRESHED_AT 2019-05-06
 
 RUN echo "deb http://repo.saltstack.com/py3/debian/10/amd64/archive/${SALT_VERSION} buster main" > /etc/apt/sources.list.d/salt.list
 ADD https://repo.saltstack.com/py3/debian/10/amd64/archive/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub /tmp/SALTSTACK-GPG-KEY.pub
