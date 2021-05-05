@@ -7,23 +7,37 @@ ENV container docker
 ENV INITSYSTEM on
 ENV UDEV on
 ENV DEBIAN_FRONTEND noninteractive
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
 
-ENV SALT_VERSION 2019.2.7
+ENV SALT_VERSION 3003
 #ENV REFRESHED_AT 2019-05-06
 
-RUN echo "deb http://repo.saltstack.com/py3/debian/10/amd64/archive/${SALT_VERSION} buster main" > /etc/apt/sources.list.d/salt.list
-ADD https://repo.saltstack.com/py3/debian/10/amd64/archive/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub /tmp/SALTSTACK-GPG-KEY.pub
-RUN echo "9e0d77c16ba1fe57dfd7f1c5c2130438  /tmp/SALTSTACK-GPG-KEY.pub" | md5sum --check
-RUN apt-key add /tmp/SALTSTACK-GPG-KEY.pub
+# make the "en_US.UTF-8" locale so supervisor will be utf-8 enabled by default
+# see: https://github.com/docker-library/postgres/blob/master/13/Dockerfile#L47-L57
+RUN set -eux; \
+       if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then \
+# if this file exists, we're likely in "debian:xxx-slim", and locales are thus being excluded so we need to remove that exclusion (since we need locales)
+               grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; \
+               sed -ri '/\/usr\/share\/locale/d' /etc/dpkg/dpkg.cfg.d/docker; \
+               ! grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; \
+       fi; \
+       if [ -f /etc/dpkg/dpkg.cfg.d/01_nodoc ]; then \
+               grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/01_nodoc; \
+               sed -ri '/\/usr\/share\/locale/d' /etc/dpkg/dpkg.cfg.d/01_nodoc; \
+               ! grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/01_nodoc; \
+       fi; \
+       apt-get update; apt-get install -y --no-install-recommends locales; rm -rf /var/lib/apt/lists/*; \
+       localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+ENV LANG en_US.utf8
+
+RUN curl -fsSL -o /usr/share/keyrings/salt-archive-keyring.gpg https://repo.saltproject.io/py3/debian/10/amd64/${SALT_VERSION}/salt-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/salt-archive-keyring.gpg] https://repo.saltproject.io/py3/debian/10/amd64/${SALT_VERSION} buster main" | sudo tee /etc/apt/sources.list.d/salt.list
 
 RUN apt-get update && apt-get install -yq --no-install-recommends systemd \
     systemd-sysv dbus vim less net-tools procps lsb-release git \
     openssh-client make gnupg salt-master salt-api python3-apt python3-git \
     python3-openssl python3-pip python3-setuptools python3-wheel expect \
-    && pip3 install CherryPy https://github.com/bbinet/reclass/archive/helioslite.zip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && pip3 install CherryPy https://github.com/salt-formulas/reclass/archive/v1.7.0.zip \
+    && rm -rf /var/lib/apt/lists/*
 
 # We never want these to run in a container
 # Feel free to edit the list but this is the one we used
