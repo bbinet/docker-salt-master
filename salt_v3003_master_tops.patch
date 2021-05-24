@@ -1,0 +1,22 @@
+diff --git a/salt/master.py b/salt/master.py
+index e33d76905d..cddc12efdd 100644
+--- a/salt/master.py
++++ b/salt/master.py
+@@ -1204,6 +1204,7 @@ class AESFuncs(TransportMethods):
+     expose_methods = (
+         "verify_minion",
+         "_master_tops",
++        "_ext_nodes",
+         "_master_opts",
+         "_mine_get",
+         "_mine",
+@@ -1428,6 +1429,9 @@ class AESFuncs(TransportMethods):
+             return {}
+         return self.masterapi._master_tops(load, skip_verify=True)
+ 
++    # Needed so older minions can request master_tops
++    _ext_nodes = _master_tops
++
+     def _master_opts(self, load):
+         """
+         Return the master options to the minion

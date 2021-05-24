@@ -33,11 +33,16 @@ RUN curl -fsSL -o /usr/share/keyrings/salt-archive-keyring.gpg https://repo.salt
     echo "deb [signed-by=/usr/share/keyrings/salt-archive-keyring.gpg] https://repo.saltproject.io/py3/debian/10/amd64/${SALT_VERSION} buster main" | sudo tee /etc/apt/sources.list.d/salt.list
 
 RUN apt-get update && apt-get install -yq --no-install-recommends systemd \
-    systemd-sysv dbus vim less net-tools procps lsb-release git \
+    systemd-sysv dbus vim less net-tools procps lsb-release git patch \
     openssh-client make gnupg salt-master salt-api python3-apt python3-git \
     python3-openssl python3-pip python3-setuptools python3-wheel expect \
     && pip3 install CherryPy https://github.com/salt-formulas/reclass/archive/v1.7.0.zip \
     && rm -rf /var/lib/apt/lists/*
+
+# Dirty fix issue https://github.com/saltstack/salt/issues/59990
+# (reverting: https://github.com/saltstack/salt/pull/59866)
+COPY salt_v3003_master_tops.patch /tmp/salt_v3003_master_tops.patch
+RUN patch /usr/lib/python3/dist-packages/salt/master.py /tmp/salt_v3003_master_tops.patch 
 
 # We never want these to run in a container
 # Feel free to edit the list but this is the one we used
