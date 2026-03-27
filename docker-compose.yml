@@ -3,7 +3,8 @@ services:
     build: .
     container_name: salt-master
     hostname: salt-master
-    privileged: true
+    cap_add:
+      - SYS_ADMIN
     tmpfs:
       - /run
       - /run/lock
