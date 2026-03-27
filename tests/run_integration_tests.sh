@@ -79,10 +79,15 @@ run_test "test.ping" \
     "$COMPOSE exec -T salt-master salt '*' test.ping --out=json --timeout=30" \
     "true"
 
-# Test 2: Check Freexian LTS repo is configured in the master
-run_test "Freexian LTS repo present" \
-    "$COMPOSE exec -T salt-master cat /etc/apt/sources.list" \
-    "deb.freexian.com/extended-lts"
+# Test 2: Check Salt 3006 is installed
+run_test "Salt 3006 installed" \
+    "$COMPOSE exec -T salt-master salt --version" \
+    "3006"
+
+# Test 2b: Check minimum_auth_version is set
+run_test "minimum_auth_version configured" \
+    "$COMPOSE exec -T salt-master cat /etc/salt/master.d/minimum_auth_version.conf" \
+    "minimum_auth_version: 0"
 
 # Test 3: Reclass ext_pillar delivers pillar data
 run_test "Reclass ext_pillar delivers motd_message" \
