@@ -1,0 +1,18 @@
+services:
+  salt-master:
+    image: bbinet/salt-master:test
+    container_name: salt-master-test
+    hostname: salt-master
+    environment:
+      - SALT_API_CMD=
+    volumes:
+      - ./master.conf:/etc/salt/master.d/test.conf:ro
+
+  salt-minion:
+    image: bbinet/salt-minion:test
+    container_name: salt-minion-test
+    hostname: salt-minion
+    depends_on:
+      - salt-master
+    volumes:
+      - ./minion.conf:/etc/salt/minion.d/test.conf:ro

@@ -1,0 +1,26 @@
+FROM debian:bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Switch Debian repos to HTTPS
+RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources
+
+# Preserve proxy CA cert if injected, then install base dependencies
+RUN cp /etc/ssl/certs/ca-certificates.crt /tmp/proxy-ca.crt 2>/dev/null || true && \
+  apt-get update && apt-get install -yq --no-install-recommends \
+  ca-certificates python3 python3-pip \
+  python3-zmq python3-msgpack python3-jinja2 python3-yaml \
+  python3-markupsafe python3-requests python3-distro python3-psutil \
+  python3-packaging python3-openssl python3-cryptography \
+  && rm -rf /var/lib/apt/lists/* && \
+  if [ -f /tmp/proxy-ca.crt ]; then \
+    cp /tmp/proxy-ca.crt /usr/local/share/ca-certificates/proxy-ca.crt && \
+    update-ca-certificates; \
+  fi
+
+# Install Salt minion via pip
+ENV SALT_VERSION=3006.9
+RUN pip3 install --no-cache-dir --break-system-packages \
+  looseversion salt==${SALT_VERSION}
+
+CMD ["/usr/local/bin/salt-minion", "-c", "/etc/salt", "--log-file-level=quiet", "--log-level=info"]
