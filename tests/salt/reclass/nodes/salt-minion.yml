@@ -1,0 +1,6 @@
+classes:
+  - default
+
+parameters:
+  _param:
+    environment: integration-test

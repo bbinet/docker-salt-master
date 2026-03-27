@@ -1,0 +1,37 @@
+services:
+  salt-master:
+    build: .
+    container_name: salt-master
+    hostname: salt-master
+    privileged: true
+    tmpfs:
+      - /run
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - ./tests/salt/master.d/auto_accept.conf:/etc/salt/master.d/auto_accept.conf:ro
+      - ./tests/salt/master.d/reclass.conf:/etc/salt/master.d/reclass.conf:ro
+      - ./tests/salt/master.d/file_roots.conf:/etc/salt/master.d/file_roots.conf:ro
+      - ./tests/salt/states:/srv/salt/states:ro
+      - ./tests/salt/reclass:/srv/salt/reclass:ro
+    environment:
+      - INITSYSTEM=on
+    ports:
+      - "4505:4505"
+      - "4506:4506"
+
+  salt-minion:
+    image: bbinet/salt-minion:buster_3003
+    container_name: salt-minion
+    hostname: salt-minion
+    privileged: true
+    tmpfs:
+      - /run
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - ./tests/salt/minion.d/master.conf:/etc/salt/minion.d/master.conf:ro
+    depends_on:
+      - salt-master
+    environment:
+      - INITSYSTEM=on
