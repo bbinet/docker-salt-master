@@ -92,7 +92,7 @@ run_test "Reclass ext_pillar delivers motd_message" \
 # Test 4: state.highstate applies successfully
 run_test "state.highstate succeeds" \
     "$COMPOSE exec -T salt-master salt '*' state.highstate --out=json --timeout=120" \
-    "Succeeded"
+    '"result": true'
 
 # Test 5: Verify /etc/motd was created with reclass pillar content
 run_test "motd file created with reclass pillar content" \
