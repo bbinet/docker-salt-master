@@ -9,10 +9,13 @@ services:
       - ./master.conf:/etc/salt/master.d/test.conf:ro
 
   salt-minion:
-    image: bbinet/salt-minion:test
+    image: bbinet/salt-minion:buster_3003
     container_name: salt-minion-test
     hostname: salt-minion
     depends_on:
       - salt-master
+    environment:
+      - INITSYSTEM=off
+    command: salt-minion -c /etc/salt --log-file-level=quiet --log-level=info
     volumes:
       - ./minion.conf:/etc/salt/minion.d/test.conf:ro

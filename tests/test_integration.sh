@@ -16,8 +16,8 @@ trap cleanup EXIT
 echo "=> Building salt-master image..."
 docker build -t bbinet/salt-master:test "$PROJECT_DIR"
 
-echo "=> Building salt-minion image..."
-docker build -f "$SCRIPT_DIR/Dockerfile.minion" -t bbinet/salt-minion:test "$SCRIPT_DIR"
+echo "=> Pulling salt-minion image..."
+docker pull bbinet/salt-minion:buster_3003
 
 echo "=> Starting salt-master..."
 $COMPOSE up -d salt-master
