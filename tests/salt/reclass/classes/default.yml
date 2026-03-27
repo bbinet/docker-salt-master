@@ -1,0 +1,4 @@
+classes: []
+
+parameters:
+  motd_message: "Hello from Reclass ext_pillar!"
