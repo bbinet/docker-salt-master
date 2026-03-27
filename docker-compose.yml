@@ -3,7 +3,8 @@ services:
     build: .
     container_name: salt-master
     hostname: salt-master
-    privileged: true
+    cap_add:
+      - SYS_ADMIN
     tmpfs:
       - /run
       - /run/lock
@@ -24,7 +25,8 @@ services:
     image: bbinet/salt-minion:buster_3003
     container_name: salt-minion
     hostname: salt-minion
-    privileged: true
+    cap_add:
+      - SYS_ADMIN
     tmpfs:
       - /run
       - /run/lock
