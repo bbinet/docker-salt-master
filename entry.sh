@@ -3,7 +3,6 @@
 set -m
 
 # This command only works in privileged container
-
 if ip link add dummy0 type dummy &> /dev/null; then
 	PRIVILEGED=true
 	# clean the dummy0 link
@@ -16,24 +15,6 @@ fi
 function signal_handler()
 {
 	kill "$pid"
-}
-
-function start_udev()
-{
-	if [ "$UDEV" == "on" ]; then
-		if [ "$INITSYSTEM" != "on" ]; then
-			if command -v udevd &>/dev/null; then
-				unshare --net udevd --daemon &> /dev/null
-			else
-				unshare --net /lib/systemd/systemd-udevd --daemon &> /dev/null
-			fi
-			udevadm trigger &> /dev/null
-		fi
-	else
-		if [ "$INITSYSTEM" == "on" ]; then
-			systemctl mask systemd-udevd
-		fi
-	fi
 }
 
 function mount_dev()
@@ -56,7 +37,7 @@ function mount_dev()
 	# /dev/ptmx point to its ptmx.
 	# ref: https://www.kernel.org/doc/Documentation/filesystems/devpts.txt
 	ln -sf /dev/pts/ptmx /dev/ptmx
-	mount -t debugfs nodev /sys/kernel/debug
+	mount -t debugfs nodev /sys/kernel/debug || true
 }
 
 function init_systemd()
@@ -101,6 +82,7 @@ function init_non_systemd()
 	fi
 }
 
+INITSYSTEM=${INITSYSTEM:-on}
 INITSYSTEM=$(echo "$INITSYSTEM" | awk '{print tolower($0)}')
 
 case "$INITSYSTEM" in
@@ -109,18 +91,9 @@ case "$INITSYSTEM" in
 	;;
 esac
 
-UDEV=$(echo "$UDEV" | awk '{print tolower($0)}')
-
-case "$UDEV" in
-	'1' | 'true')
-		UDEV='on'
-	;;
-esac
-
 if $PRIVILEGED; then
-	# Only run this in privileged container
+	# Only run mount_dev in privileged container
 	mount_dev
-	start_udev
 fi
 
 if [ "$INITSYSTEM" = "on" ]; then
