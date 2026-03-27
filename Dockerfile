@@ -11,15 +11,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN echo "deb https://archive.debian.org/debian bullseye main" > /etc/apt/sources.list && \
     echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
 
-# Install proxy CA certificates so apt/curl can work behind MITM proxy
-COPY swp-ca-*.crt /usr/local/share/ca-certificates/
-RUN mkdir -p /etc/ssl/certs && \
-    cat /usr/local/share/ca-certificates/swp-ca-*.crt > /etc/ssl/certs/ca-certificates.crt
-
 # First install ca-certificates and curl (needed for Freexian GPG key) with archive repo only
 RUN apt-get update && \
     apt-get install -yq --no-install-recommends ca-certificates curl && \
-    update-ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 # Add Freexian Extended LTS repo for security updates
